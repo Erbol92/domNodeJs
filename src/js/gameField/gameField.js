@@ -4,7 +4,7 @@ export class GameField {
     this.started = false;
     this.goblin = null;
     this.interval = null;
-    this.knocked = false;
+    this.pos = -1;
   }
 
   startGame() {
@@ -24,13 +24,11 @@ export class GameField {
           inputs[1].value = (parseInt(inputs[1].value) || 0) + 1;
         } else {
           inputs[0].value = (parseInt(inputs[0].value) || 0) + 1;
-          this.knocked = true;
           this._resetGoblinMovement(cells);
         }
       });
-      const pos = this._getGoblinPosition(cells);
-      this._moveGoblin(pos, cells);
     });
+    this._moveGoblin(cells);
   }
 
   resetGame() {
@@ -53,23 +51,25 @@ export class GameField {
   _createGoblin() {
     const goblin = document.createElement("div");
     goblin.classList.add("goblin");
+    goblin.addEventListener('mouseenter', () => {
+      goblin.classList.add('scale');
+    });
+    goblin.addEventListener('mouseleave', () => {
+      goblin.classList.remove('scale');
+    });  
     this.goblin = goblin;
   }
 
-  _getGoblinPosition(cells) {
-    return Array.prototype.indexOf.call(cells, this.goblin.closest(".cell"));
-  }
-
-  _moveGoblin(pos, cells) {
+  _moveGoblin(cells) {
     let newPos;
     do {
       newPos = this._getRandomInt(0, 16);
-    } while (pos === newPos);
-
-    if (pos !== -1) {
-      cells[pos].classList.remove("withGoblin");
+    } while (this.pos === newPos);
+    
+    if (this.pos !== -1) {
+      cells[this.pos].classList.remove("withGoblin");
     }
-
+    this.pos = newPos;
     const cellWithGoblin = cells[newPos];
     cellWithGoblin.appendChild(this.goblin);
     cellWithGoblin.classList.add("withGoblin");
@@ -80,10 +80,9 @@ export class GameField {
   }
 
   _startGoblinMovement(cells) {
-    const pos = this._getGoblinPosition(cells);
-    this._moveGoblin(pos, cells);
+    this._moveGoblin(cells);
     this.interval = setInterval(() => {
-      this._moveGoblin(pos, cells);
+      this._moveGoblin(cells);
     }, 1500);
   }
 
