@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const reset = document.querySelector("button.reset");
 
   start.addEventListener("click", () => {
-    if (confirm("начать игру?")) {
+    if (!game.started && confirm("начать игру?")) {
       game.startGame();
     }
   });
