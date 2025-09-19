@@ -28,7 +28,6 @@ export class GameField {
         }
       });
     });
-    this._moveGoblin(cells);
   }
 
   resetGame() {
